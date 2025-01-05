@@ -1,0 +1,22 @@
+{
+    "builds": [{
+      "src": "task_manager/wsgi.py",
+      "use": "@vercel/python",
+      "config": { 
+        "maxLambdaSize": "15mb", 
+        "runtime": "python3.9",
+        "buildCommand": "bash build.sh"
+      }
+    }],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "task_manager/wsgi.py"
+      }
+    ],
+    "env": {
+      "DJANGO_SETTINGS_MODULE": "task_manager.settings"
+    }
+  }
+  
+  

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
+    <div class="relative py-3 sm:max-w-xl sm:mx-auto">
+        <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
+        <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+            <div class="max-w-md mx-auto">
+                <div class="divide-y divide-gray-200">
+                    <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+                        <h1 class="text-2xl font-bold mb-8 text-center">Create New Todo</h1>
+                        <form id="create-todo-form" class="space-y-6">
+                            <div>
+                                <label for="todo-name" class="block text-sm font-medium text-gray-700">
+                                    Todo Name
+                                </label>
+                                <div class="mt-1">
+                                    <input type="text" id="todo-name" name="name" required
+                                        class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm">
+                                </div>
+                            </div>
+
+                            <div id="error-message" class="text-red-500 text-sm hidden"></div>
+
+                            <div class="flex items-center justify-between">
+                                <button type="submit"
+                                    class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
+                                    Create Todo
+                                </button>
+                            </div>
+                        </form>
+                        <div class="mt-6 text-center">
+                            <a href="/dashboard"
+                                class="text-sm font-medium text-cyan-600 hover:text-cyan-500">
+                                Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        window.location.href = '/login';
+    }
+
+    const createTodoForm = document.getElementById('create-todo-form');
+    const errorMessage = document.getElementById('error-message');
+
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.remove('hidden');
+    }
+
+    function hideError() {
+        errorMessage.classList.add('hidden');
+    }
+
+    createTodoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideError();
+
+        const todoName = document.getElementById('todo-name').value;
+        console.log('Sending request:', { name: todoName });
+
+        try {
+            const response = await fetch('/api/tasks/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ name: todoName })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Failed to create todo');
+            }
+
+            const data = await response.json();
+            console.log('Response:', data);
+            console.log('Todo created:', data);
+            window.location.href = '/dashboard';
+        } catch (error) {
+            console.error('Error creating todo:', error);
+            showError(error.message || 'Failed to create todo. Please try again.');
+        }
+    });
+</script>
+{% endblock %}
+
