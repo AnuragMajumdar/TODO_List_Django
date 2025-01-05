@@ -18,8 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from . import views
-from django.conf import settings
-from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,8 +31,5 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('create-todo/', views.create_todo, name='create_todo'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
