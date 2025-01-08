@@ -23,12 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key')
-
+SECRET_KEY = 'django-insecure-your-secret-key-here'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1:8000']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -81,11 +80,14 @@ WSGI_APPLICATION = 'task_manager.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT', '5432')}/{os.getenv('DB_NAME')}",
-        conn_max_age=600,
-        ssl_require=True,
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'todo_db',
+        'USER': 'postgres',
+        'PASSWORD': '12345',
+        'HOST': 'localhost',  # Or your database server's IP address
+        'PORT': '5432',       # Default PostgreSQL port
+    }
 }
 
 # Password validation
